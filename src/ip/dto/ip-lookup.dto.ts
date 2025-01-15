@@ -5,6 +5,8 @@ import {
   Currency,
   IpwhoisResponse,
   Timezone,
+  Security,
+  Flag,
 } from '../../ipwhois/interfaces/ipwhois.response';
 import { Country } from '../../utils/country.enum';
 
@@ -38,22 +40,34 @@ class TimezoneDto implements Timezone {
   id?: string;
 
   @ApiPropertyOptional({
-    example: '-7:00',
-    type: String,
-  })
-  gmt_offset?: string;
-
-  @ApiPropertyOptional({
     example: 'PDT',
     type: String,
   })
-  code?: string;
+  abbr: string;
 
-  @ApiPropertyOptional({
+  @ApiResponseProperty({
     example: true,
     type: Boolean,
   })
-  is_daylight_saving?: boolean;
+  is_dst: boolean;
+
+  @ApiResponseProperty({
+    example: -25200,
+    type: Number,
+  })
+  offset: number;
+
+  @ApiPropertyOptional({
+    example: '-07:00',
+    type: String,
+  })
+  utc?: string;
+
+  @ApiPropertyOptional({
+    example: '2022-04-22T14:31:48-07:00',
+    type: String,
+  })
+  current_time?: string;
 }
 
 // DTO for the ASN object
@@ -87,6 +101,73 @@ class AsnDto implements Asn {
     type: String,
   })
   type?: string;
+}
+
+// DTO for the Security object
+class SecurityDto implements Security {
+  @ApiResponseProperty({
+    example: true,
+    type: Boolean,
+  })
+  is_proxy: boolean;
+
+  @ApiPropertyOptional({
+    example: 'VPN',
+    type: String,
+  })
+  proxy_type?: string;
+
+  @ApiResponseProperty({
+    example: false,
+    type: Boolean,
+  })
+  is_crawler: boolean;
+
+  @ApiPropertyOptional({
+    example: 'Googlebot',
+    type: String,
+  })
+  crawler_name?: string;
+
+  @ApiResponseProperty({
+    example: false,
+    type: Boolean,
+  })
+  is_tor: boolean;
+
+  @ApiPropertyOptional({
+    example: 'low',
+    type: String,
+    enum: ['low', 'medium', 'high'],
+  })
+  threat_level?: 'low' | 'medium' | 'high';
+
+  @ApiPropertyOptional({
+    example: ['fraud', 'bot'],
+    type: [String],
+  })
+  threat_types?: string[];
+}
+
+// DTO for the Flag object
+class FlagDto implements Flag {
+  @ApiResponseProperty({
+    example: 'https://cdn.ipwhois.io/flags/us.png',
+    type: String,
+  })
+  img: string;
+
+  @ApiPropertyOptional({
+    example: '🇺🇸',
+    type: String,
+  })
+  emoji?: string;
+
+  @ApiPropertyOptional({
+    example: 'U+1F1FA U+1F1F8',
+    type: String,
+  })
+  emoji_unicode?: string;
 }
 
 // Main DTO for IpLookup
@@ -125,7 +206,7 @@ export class IpLookupDto implements IpwhoisResponse {
     example: 'NA',
     type: String,
   })
-  continent_code?: keyof Country;
+  continent_code?: keyof typeof Country;
 
   @ApiPropertyOptional({
     example: 'United States',
@@ -137,7 +218,7 @@ export class IpLookupDto implements IpwhoisResponse {
     example: 'US',
     type: String,
   })
-  country_code?: keyof Country;
+  country_code?: keyof typeof Country;
 
   @ApiPropertyOptional({
     example: 'California',
@@ -149,7 +230,7 @@ export class IpLookupDto implements IpwhoisResponse {
     example: 'CA',
     type: String,
   })
-  region_code?: keyof Country;
+  region_code?: keyof typeof Country;
 
   @ApiPropertyOptional({
     example: 'Mountain View',
@@ -188,16 +269,16 @@ export class IpLookupDto implements IpwhoisResponse {
   calling_code?: string;
 
   @ApiPropertyOptional({
-    example: 'Washington D.C.',
+    example: 'Washington, D.C.',
     type: String,
   })
   capital?: string;
 
   @ApiPropertyOptional({
-    example: ['CA', 'MX'],
+    example: 'CA,MX',
     type: [String],
   })
-  borders?: Array<keyof Country> | null;
+  borders?: string | null;
 
   @ApiPropertyOptional({
     type: CurrencyDto,
@@ -216,4 +297,16 @@ export class IpLookupDto implements IpwhoisResponse {
   })
   @Type(() => AsnDto)
   asn?: AsnDto;
+
+  @ApiPropertyOptional({
+    type: SecurityDto,
+  })
+  @Type(() => SecurityDto)
+  security?: SecurityDto;
+
+  @ApiPropertyOptional({
+    type: FlagDto,
+  })
+  @Type(() => FlagDto)
+  flag?: FlagDto;
 }

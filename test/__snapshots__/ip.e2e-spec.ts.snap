@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`IpController (e2e) ips/ (GET) 200 - should return details about given ip 1`] = `
+exports[`IpController (e2e) /ips/ (GET) 200 - should return details about given ip 1`] = `
 {
   "borders": "CA,MX",
   "calling_code": "1",

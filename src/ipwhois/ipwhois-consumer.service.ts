@@ -5,6 +5,8 @@ import { IPWHOIS_CLIENT } from './ipwois-client.provider';
 
 @Injectable()
 export class IpwhoisConsumerService {
+  private readonly defaultErrorMessage = 'Failed to fetch IP details';
+
   constructor(
     @Inject(IPWHOIS_CLIENT)
     private readonly ipwhoisClient: AxiosInstance,
@@ -15,27 +17,34 @@ export class IpwhoisConsumerService {
    * @param {string} ip The IP address to query.
    * @returns {IpwhoisResponse} The IP details
    */
-  async getIpDetails(ip: string): Promise<IpwhoisResponse> {
+  async getIpData(ip: string): Promise<IpwhoisResponse> {
+    let data: IpwhoisResponse;
     try {
-      return await this.callIpwhois(ip);
+      data = await this.callIpwhois(ip);
     } catch (error) {
-      throw new HttpException(
+      throw this.createHttpException(
         error.response?.data?.message ||
           error.message ||
-          'Error fetching IP details',
-        error.response?.status || HttpStatus.INTERNAL_SERVER_ERROR,
+          this.defaultErrorMessage,
       );
     }
+
+    if (!data.success) {
+      throw this.createHttpException();
+    }
+
+    return data;
   }
 
   private async callIpwhois(ip: string): Promise<IpwhoisResponse> {
     const { data } = await this.ipwhoisClient.get<IpwhoisResponse>(`/${ip}`);
-    if (!data.success) {
-      throw new HttpException(
-        data || 'Failed to fetch IP details',
-        HttpStatus.BAD_REQUEST,
-      );
-    }
     return data;
+  }
+
+  private createHttpException(errorMessage?: string): HttpException {
+    return new HttpException(
+      errorMessage || this.defaultErrorMessage,
+      HttpStatus.INTERNAL_SERVER_ERROR,
+    );
   }
 }

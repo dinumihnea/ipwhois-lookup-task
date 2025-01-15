@@ -28,18 +28,31 @@ export interface Timezone {
    * The timezone ID (e.g., America/Los_Angeles).
    */
   id?: string;
+
   /**
-   * GMT offset of the timezone (e.g., -7:00).
+   * The Abbreviation of the Timezone (e.g. PDT)
    */
-  gmt_offset?: string;
+  abbr: string;
+
   /**
-   * Abbreviation for the timezone (e.g., PDT).
+   * true or false depending on whether or not Daylight Savings have been accounted for.
    */
-  code?: string;
+  is_dst: boolean;
+
   /**
-   * Indicates if the IP's location is currently observing daylight saving time (DST).
+   * The offset from UTC (in seconds) for the given location (e.g. -25200 for PDT's -7h UTC offset)
    */
-  is_daylight_saving?: boolean;
+  offset: number;
+
+  /**
+   * The UTC offset of the Timezone (e.g. -07:00)
+   */
+  utc?: string;
+
+  /**
+   * The exact current date and time (ISO 8601 format) associated with location (e.g. 2022-04-22T14:31:48-07:00)
+   */
+  current_time?: string;
 }
 
 /**
@@ -67,6 +80,87 @@ export interface Asn {
    * The type of ASN allocation (e.g., allocated, legacy).
    */
   type?: string;
+}
+
+export interface Connection {
+  /**
+   * The Autonomous System (AS) Number (e.g. 15169)
+   */
+  asn: number;
+  /**
+   * The name of the organization that owns the Autonomous System for the IP address that is analyzed (e.g. Google LLC)
+   */
+  org: string;
+  /**
+   * The name of the ISP associated with the IP (e.g. Google LLC)
+   */
+  isp: string;
+  /**
+   * The domain name associated with the organization that owns the connection IP (e.g. google.com)
+   */
+  domain: 'google.com';
+}
+
+/**
+ * Represents the "security" object in the IPWhois response.
+ * Provides details related to fraud prevention and security for the IP.
+ */
+export interface Security {
+  /**
+   * True if the IP address is a proxy, false otherwise.
+   */
+  is_proxy: boolean;
+
+  /**
+   * The type of proxy. Examples include VPN, TOR, etc.
+   */
+  proxy_type?: string;
+
+  /**
+   * True if the IP address is a crawler, false otherwise.
+   */
+  is_crawler: boolean;
+
+  /**
+   * The name or type of crawler, if applicable.
+   */
+  crawler_name?: string;
+
+  /**
+   * True if the IP address is a tor exit node, false otherwise.
+   */
+  is_tor: boolean;
+
+  /**
+   * Whether the IP represents a threat based on known security databases.
+   */
+  threat_level?: 'low' | 'medium' | 'high';
+
+  /**
+   * A description of the threat associated with this IP, if any.
+   */
+  threat_types?: string[];
+}
+
+/**
+ * Represents the "flag" object in the IPWhois response.
+ * Provides details about the country's flag associated with the IP location.
+ */
+export interface Flag {
+  /**
+   * The URL to the image of the country's flag (e.g., a PNG or SVG file).
+   */
+  img: string;
+
+  /**
+   * The emoji representation of the country's flag, if available.
+   */
+  emoji?: string;
+
+  /**
+   * Unicode values associated with the country's flag emoji (e.g., U+1F1FA U+1F1F8 for 🇺🇸).
+   */
+  emoji_unicode?: string;
 }
 
 /**
@@ -99,7 +193,7 @@ export interface IpwhoisResponse {
   /**
    * Two-letter (ISO 3166-1) continent code (e.g., NA).
    */
-  continent_code?: keyof Country;
+  continent_code?: keyof typeof Country;
   /**
    * Name of the country (e.g., United States).
    */
@@ -107,7 +201,7 @@ export interface IpwhoisResponse {
   /**
    * Two-letter (ISO 3166-1) country code (e.g., US).
    */
-  country_code?: keyof Country;
+  country_code?: keyof typeof Country;
   /**
    * Name of the state or region (e.g., California).
    */
@@ -115,7 +209,7 @@ export interface IpwhoisResponse {
   /**
    * ISO 3166-2 region code (e.g., CA).
    */
-  region_code?: keyof Country;
+  region_code?: keyof typeof Country;
   /**
    * Name of the city (e.g., Mountain View).
    */
@@ -147,7 +241,7 @@ export interface IpwhoisResponse {
   /**
    * Two-letter ISO (3166-1) codes of countries bordering this IP's country (e.g., CA, MX).
    */
-  borders?: Array<keyof Country> | null;
+  borders?: string | null;
   /**
    * Information about the currency associated with the IP address.
    */
@@ -160,4 +254,17 @@ export interface IpwhoisResponse {
    * Autonomous System Number (ASN) information for the IP.
    */
   asn?: Asn;
+  /**
+   * Connection information associated with the IP address.
+   */
+  connection?: Connection;
+  /**
+   * Security information associated with the IP address, such as proxy or threat details.
+   */
+  security?: Security;
+
+  /**
+   * Information about the country's flag associated with the IP address.
+   */
+  flag?: Flag;
 }

@@ -10,9 +10,9 @@ class EnvironmentVariablesValidator {
 }
 
 export default registerAs<IpwhoisConfig>('ipwhois', () => {
-  validateConfig(process.env, EnvironmentVariablesValidator);
+  const config = validateConfig(process.env, EnvironmentVariablesValidator);
 
   return {
-    baseUrl: process.env.IPWHOIS_BASE_URL as string,
+    baseUrl: config.IPWHOIS_BASE_URL,
   };
 });
