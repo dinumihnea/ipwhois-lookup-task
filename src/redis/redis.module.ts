@@ -5,6 +5,9 @@ import { ConfigService } from '@nestjs/config';
 import { AllConfigType } from '../config/config.type';
 import { RedisOptions } from 'ioredis/built/redis/RedisOptions';
 
+/**
+ * NestJS module to interact with Redis
+ */
 export class RedisModule {
   public static forRoot(options?: RedisOptions): DynamicModule {
     return {

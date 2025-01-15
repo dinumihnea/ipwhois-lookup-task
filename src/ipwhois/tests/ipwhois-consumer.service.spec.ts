@@ -8,7 +8,7 @@ const succesfulResponseMock = {
   data: ipwhoisResponseMock,
 };
 
-const ipwhoisClientIntance = {
+const ipwhoisClientInstance = {
   get: jest.fn(() => Promise.resolve(succesfulResponseMock)),
 } as any as Mocked<AxiosInstance>;
 
@@ -16,7 +16,7 @@ describe('IpwhoisConsumerService', () => {
   let service: IpwhoisConsumerService;
 
   beforeEach(async () => {
-    service = new IpwhoisConsumerService(ipwhoisClientIntance);
+    service = new IpwhoisConsumerService(ipwhoisClientInstance);
 
     jest.clearAllMocks();
   });
@@ -31,7 +31,7 @@ describe('IpwhoisConsumerService', () => {
     });
 
     it('should throw HttpException when request fails', async () => {
-      ipwhoisClientIntance.get.mockRejectedValueOnce(new Error());
+      ipwhoisClientInstance.get.mockRejectedValueOnce(new Error());
 
       await expect(service.getIpData(testIp)).rejects.toEqual(
         new HttpException('Failed to fetch IP details', 400),
@@ -39,7 +39,7 @@ describe('IpwhoisConsumerService', () => {
     });
 
     it('should throw HttpException when response "success" flag is false', async () => {
-      ipwhoisClientIntance.get.mockResolvedValueOnce({
+      ipwhoisClientInstance.get.mockResolvedValueOnce({
         data: { ...ipwhoisResponseMock, success: false },
       });
 

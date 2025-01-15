@@ -1,12 +1,10 @@
 services:
   postgres:
-    container_name: tech-task-ip-db
     image: postgres:17.0-alpine
     environment:
       POSTGRES_USER: ${DATABASE_USERNAME}
       POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
       POSTGRES_DB: ${DATABASE_NAME}
-      POSTGRES_MULTIPLE_EXTENSIONS: "uuid-ossp"
     ports:
     - ${DATABASE_PORT}:5432
     volumes:
@@ -14,7 +12,6 @@ services:
 
   redis:
     image: redis:7-alpine
-    command: redis-server
     volumes:
       - tech-task-ip-redis:/var/lib/redis
       - tech-task-ip-redis-config:/usr/local/etc/redis/redis.conf

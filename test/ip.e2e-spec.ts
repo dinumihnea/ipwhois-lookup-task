@@ -1,9 +1,8 @@
 import * as request from 'supertest';
-import { APP_URL } from './constants';
+
+export const APP_URL = `http://localhost:${process.env.APP_PORT}`;
 
 describe('IpController (e2e)', () => {
-  const app = APP_URL;
-
   describe('/ips/ (GET)', () => {
     it.each([
       {
@@ -25,7 +24,7 @@ describe('IpController (e2e)', () => {
         },
       },
     ])('422 - should reject when $query', ({ query, errors }) => {
-      return request(app)
+      return request(APP_URL)
         .get('/ips')
         .query(query)
         .expect(422)
@@ -38,7 +37,7 @@ describe('IpController (e2e)', () => {
     });
 
     it('200 - should return details about given ip', () => {
-      return request(app)
+      return request(APP_URL)
         .get('/ips')
         .query({ ip: '8.8.4.4' })
         .expect(200)
@@ -73,7 +72,7 @@ describe('IpController (e2e)', () => {
         },
       },
     ])('422 - should reject when $query', ({ query, errors }) => {
-      return request(app)
+      return request(APP_URL)
         .delete('/ips')
         .query(query)
         .expect(422)
@@ -86,13 +85,13 @@ describe('IpController (e2e)', () => {
     });
 
     it('204 - should delete details when previously stored', async () => {
-      const { ip } = await request(app)
+      const { ip } = await request(APP_URL)
         .get('/ips')
         .query({ ip: '8.8.4.4' })
         .expect(200)
         .then(({ body }) => body);
 
-      await request(app).delete('/ips').query({ ip }).expect(204);
+      await request(APP_URL).delete('/ips').query({ ip }).expect(204);
     });
   });
 });
