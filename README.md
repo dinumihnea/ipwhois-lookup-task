@@ -21,11 +21,53 @@ Implement REST API that allows users to:
 
 [Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
 
+PostgreSQL + TypeORM
+
 ## Project setup
 
-```bash
-$ npm install
-```
+1. Env config
+    **For local development: clone `.env.example` into `.env` and set appropriate keys**
+    ```bash
+    cp .env.example .env
+    ```
+    
+    ```bash
+    docker compose up -d
+    ```
+
+2. Change `DATABASE_HOST=postgres` to `DATABASE_HOST=localhost`
+
+3. Run additional container:
+
+   ```bash
+   docker compose up -d postgres
+   ```
+
+4. Install dependency
+
+   ```bash
+   npm install
+   ```
+
+5. Run migrations
+
+   ```bash
+   npm run migration:run
+   ```
+
+6. Run seeds
+
+   ```bash
+   npm run seed:run
+   ```
+
+7. Run app in dev mode
+
+   ```bash
+   npm run start:dev
+   ```
+
+8. Open <http://localhost:3000>
 
 ## Compile and run the project
 
